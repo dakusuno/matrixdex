@@ -38,6 +38,8 @@ export class MdClient {
       },
     })
       .then((result) => {
+        console.log(`refresh :${result.data}`);
+
         let resultData = result.data as TokenResponse;
 
         console.log(resultData);
@@ -67,6 +69,8 @@ export class MdClient {
       },
     })
       .then((result) => {
+        console.log(`login :${result.data}`);
+
         let resultData = result.data as TokenResponse;
 
         console.log(resultData);
@@ -93,13 +97,15 @@ export class MdClient {
 
     return await this.client({
       method: "get",
-      url: "https://api.mangadex.org/user/follows/manga/feed?limit=32&offset=0&translatedLanguage[]=en&includes[]=manga&includes[]=scanlation_group&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&order[readableAt]=desc",
+      url: "https://api.mangadex.org/user/follows/manga/feed?limit=10&offset=0&translatedLanguage[]=en&includes[]=manga&includes[]=scanlation_group&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&order[readableAt]=desc",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${session}`,
       },
     })
       .then((res) => {
+        console.log(`feed :${res.data}`);
+
         let resultData = res.data as ChapterResponse;
 
         let a: Array<ResultFeed> = resultData.data.map((v) => {

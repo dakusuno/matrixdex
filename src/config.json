@@ -1,8 +1,8 @@
 {
-    "matrix_server": "https://matrix.org",
-    "username": "@username:matrix.org",
+    "matrix_server": "https://matrix.radityawan.my.id",
+    "username": "@bot-md:matrix.radityawan.my.id",
     "access_token": "syt_Ym90LW1k_hmxORydTFPeAsvAnFAyQ_1lNH8u",
-    "room_id":"!rOgePjGSBGFvxCPUXT:matrix.org",
-    "md_username":"mangadexusername",
-    "md_password":"mangadexpassword"
+    "room_id":"!rOgePjGSBGFvxCPUXT:matrix.radityawan.my.id",
+    "md_username":"dakusuno",
+    "md_password":"ghijklmn0"
 }

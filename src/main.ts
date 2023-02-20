@@ -49,12 +49,13 @@ client.start().then(() =>{
 
     let dbClient = new ChapterDb(db);
 
+    // client.sendText(config.room_id, 'message');
     dbClient.findOne((_, res) => {
       let latestid = res.length > 0 ? res[0].chapter_id : "";
 
       mdCient
         .feed()
-        .then((v) => {
+        .then(async (v) => {
           for (let index = 0; index < v.length; index++) {
             const element = v[index];
 
@@ -64,11 +65,14 @@ client.start().then(() =>{
 
             dbClient.insert(element.id);
 
+            console.log('aaaaaaaaaaa');
+
            const message = 
            `${element.manga_title} ${element.chapter} \n https://mangadex.org/chapter/${element.id}/1`;
 
            client.sendText(config.room_id, message);
-        }
+
+          }
         })
         .catch((err) => {});
     });
@@ -78,3 +82,7 @@ client.start().then(() =>{
    
 
 });
+
+function delay(ms: number) {
+  return new Promise( resolve => setTimeout(resolve, ms) );
+}
