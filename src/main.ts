@@ -33,9 +33,11 @@ client.start().then(() =>{
 
     let mdCient = new MdClient(config.md_username ?? "", config.md_password);
 
+
+    console.log( mdCient.local.getRefresh() == '');
+
   if (
-    mdCient.local.getRefresh() == null &&
-    mdCient.local.getRefresh() == null
+    mdCient.local.getRefresh() == ''
   ) {
     mdCient.login();
   }
@@ -48,6 +50,8 @@ client.start().then(() =>{
     const db = new sqlite3.Database("./md.db");
 
     let dbClient = new ChapterDb(db);
+
+  
 
     // client.sendText(config.room_id, 'message');
     dbClient.findOne((_, res) => {
