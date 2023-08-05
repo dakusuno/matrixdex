@@ -1,7 +1,7 @@
 import {
-    MatrixClient,
-    SimpleFsStorageProvider,
-    AutojoinRoomsMixin,
+  MatrixClient,
+  SimpleFsStorageProvider,
+  AutojoinRoomsMixin,
 } from "matrix-bot-sdk";
 import { LocalStorage } from "node-localstorage";
 global.localStorage = new LocalStorage("./scratch");
@@ -29,12 +29,12 @@ AutojoinRoomsMixin.setupOnClient(client);
 
 // Now that the client is all set up and the event handler is registered, start the
 // client up. This will start it syncing.
-client.start().then(() =>{
+client.start().then(() => {
 
-    let mdCient = new MdClient(config.md_username ?? "", config.md_password);
+  let mdCient = new MdClient(config.md_username ?? "", config.md_password);
 
 
-    console.log( mdCient.local.getRefresh() == '');
+  console.log(mdCient.local.getRefresh() == '');
 
   if (
     mdCient.local.getRefresh() == ''
@@ -42,7 +42,7 @@ client.start().then(() =>{
     mdCient.login();
   }
 
-  cron.schedule("* * * * *", () => {
+  // cron.schedule("*/2 * * * *", () => {
     console.log('Start fetching...');
 
     const sqlite3 = sqlite.verbose();
@@ -51,42 +51,43 @@ client.start().then(() =>{
 
     let dbClient = new ChapterDb(db);
 
-  
+
 
     // client.sendText(config.room_id, 'message');
     dbClient.findOne((_, res) => {
-      let latestid = res.length > 0 ? res[0].chapter_id : "";
+      let latestid = res != undefined && res.length > 0 ? res[0].chapter_id : "";
+
+      console.log(`aaaaaaaaaaa ${res}`);
 
       mdCient
         .feed()
-        .then(async (v) => {
-          for (let index = 0; index < v.length; index++) {
-            const element = v[index];
+        .then(async (resultFeed) => {
+          
+          const indexLatestId = resultFeed.findIndex((e)=>e.id == latestid)
 
-            if (element.id == latestid) {
-              break;
-            }
+          const indexFilter = indexLatestId>0 ?resultFeed.splice(0,indexLatestId):resultFeed;
 
+          console.log(indexFilter);
+
+          indexFilter.reverse().forEach(element => {
             dbClient.insert(element.id);
 
-            console.log('aaaaaaaaaaa');
+            const message =
+              `${element.manga_title} \nChapter: ${element.chapter} \nhttps://mangadex.org/chapter/${element.id}/1 `;
 
-           const message = 
-           `${element.manga_title} ${element.chapter} \n https://mangadex.org/chapter/${element.id}/1`;
-
-           client.sendText(config.room_id, message);
-
-          }
+            client.sendText(config.room_id, message);
+          });
         })
-        .catch((err) => {});
+        .catch((err) => {
+          console.log(err);
+        });
     });
   });
 
-    
-   
 
-});
+
+// });
 
 function delay(ms: number) {
-  return new Promise( resolve => setTimeout(resolve, ms) );
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
