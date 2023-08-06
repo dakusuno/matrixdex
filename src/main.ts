@@ -53,11 +53,11 @@ client.start().then(() => {
 
 
 
-    // client.sendText(config.room_id, 'message');
+    // client.sendText(config.rooms_id, 'message');
     dbClient.findOne((_, res) => {
       let latestid = res != undefined && res.length > 0 ? res[0].chapter_id : "";
 
-      console.log(`aaaaaaaaaaa ${res}`);
+      console.log(`aaaaaaaaaaa ${latestid == ""? "no id found":latestid}`);
 
       mdCient
         .feed()
@@ -69,7 +69,7 @@ client.start().then(() => {
 
           console.log(indexFilter);
 
-          indexFilter.reverse().forEach(element => {
+          indexFilter.forEach(element => {
             dbClient.insert(element.id);
 
             const message =
