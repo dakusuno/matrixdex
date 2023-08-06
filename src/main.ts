@@ -89,13 +89,13 @@ client.start().then(() => {
           console.log('aaaaaaaaaaa reverseIndexFilter');
 
 
-
+         
 
           reverseIndexFilter.forEach((element) => {
             const message =
               `${element.manga_title} \Chapter: ${element.chapter} \nhttps://mangadex.org/chapter/${element.id}/1 \n`;
 
-            console.log(message);
+              client.sendText(config.room_id, message);
 
           })
 
