@@ -20,7 +20,7 @@ export class ChapterDb {
 
     this.dbpool.serialize(() => {
       this.dbpool.all(
-        `SELECT * FROM chapter ORDER BY id DESC LIMIT 1`,
+        `SELECT * FROM chapter ORDER BY id DESC LIMIT 10`,
         callback
       );
     });

@@ -108,7 +108,7 @@ export class MdClient {
       },
     })
       .then((res) => {
-        console.log(`feed :${res.data}`);
+        console.log(`feed :${res.data}`); 
 
         let resultData = res.data as ChapterResponse;
 

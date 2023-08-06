@@ -10,6 +10,7 @@ import * as cron from "node-cron";
 import config from "./config.json";
 import { MdClient } from "./services/md-client";
 import { ChapterDb } from "./db/chapter_db";
+import { isBigIntLiteral } from "typescript";
 
 // where you would point a client to talk to a homeserver
 const homeserverUrl = config.matrix_server;
@@ -42,51 +43,82 @@ client.start().then(() => {
     mdCient.login();
   }
 
-  cron.schedule("* * * * *", () => {
-    console.log('Start fetching...');
+  // cron.schedule("* * * * *", () => {
+  console.log('Start fetching...');
 
-    const sqlite3 = sqlite.verbose();
+  const sqlite3 = sqlite.verbose();
 
-    const db = new sqlite3.Database("./md.db");
+  const db = new sqlite3.Database("./md.db");
 
-    let dbClient = new ChapterDb(db);
+  let dbClient = new ChapterDb(db);
 
 
 
-    // client.sendText(config.rooms_id, 'message');
-    dbClient.findOne((_, res) => {
-      let latestid = res != undefined && res.length > 0 ? res[0].chapter_id : "";
+  // client.sendText(config.rooms_id, 'message');
+  dbClient.findOne((_, res) => {
+    let latestid = res != undefined && res.length > 0 ? res[0].chapter_id : "";
 
-      console.log(`aaaaaaaaaaa ${latestid == ""? "no id found":latestid}`);
+    console.log(`aaaaaaaaaaa latestid ${latestid == "" ? "no id found" : latestid}`);
 
-      mdCient
-        .feed()
-        .then(async (resultFeed) => {
-          
-          const indexLatestId = resultFeed.findIndex((e)=>e.id == latestid)
+    let resAll = res != undefined ? res : [];
 
-          const indexFilter = indexLatestId>0 ?resultFeed.splice(0,indexLatestId):resultFeed;
+    console.log(res)
 
-          console.log(indexFilter);
+    mdCient
+      .feed()
+      .then(async (resultFeed) => {
+        console.log(`aaaaaaaaaaa resultFeed`);
 
-          indexFilter.forEach(element => {
-            dbClient.insert(element.id);
+        console.log(resultFeed);
 
-            const message =
-              `${element.manga_title} \nChapter: ${element.chapter} \nhttps://mangadex.org/chapter/${element.id}/1 `;
+        const indexLatestId2 = resultFeed.findIndex((e) => e.id == latestid)
 
-            client.sendText(config.room_id, message);
-          });
+        const indexLatestId = indexLatestId2 < 0 ? (indexLatestId2 == 0 ? -1 : resultFeed.length + 1) : indexLatestId2;
+
+
+
+        console.log(`aaaaaaaaaaa indexLatestId = ${indexLatestId}`);
+
+        const indexFilter = resultFeed.splice(0, indexLatestId);
+
+        console.log('aaaaaaaaaaa indexFilter');
+
+
+        console.log(indexFilter);
+
+        const reverseIndexFilter = indexFilter.reverse();
+
+
+        let a = indexFilter.map((element) => element.id);
+
+ 
+
+        reverseIndexFilter.forEach((element) => {
+
+          dbClient.insert(element.id);
+
+          console.log(element.id);
+
+
+
+          const message =
+            `${element.manga_title} \Chapter: ${element.chapter} \nhttps://mangadex.org/chapter/${element.id}/1 \n`;
+
+          console.log(message);
+
+          // client.sendText(config.room_id, message);
         })
-        .catch((err) => {
-          console.log(err);
-        });
-    });
+
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   });
-
-
-
 });
+
+
+
+// });
 
 function delay(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));

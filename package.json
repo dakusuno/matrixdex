@@ -9,12 +9,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/matrix-js-sdk": "^11.0.1",
-    "@vector-im/matrix-bot-sdk": "^0.6.3-element.0",
     "axios": "^1.3.3",
     "g": "^2.0.1",
     "jwt-check-expiration": "^1.0.5",
-    "matrix-bot-sdk": "^0.6.3",
+    "matrix-bot-sdk": "^0.5.19",
     "node-cron": "^3.0.2",
     "node-localstorage": "^2.2.1",
     "sqlite3": "^5.1.4",
