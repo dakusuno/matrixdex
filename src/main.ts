@@ -43,82 +43,72 @@ client.start().then(() => {
     mdCient.login();
   }
 
-  // cron.schedule("* * * * *", () => {
-  console.log('Start fetching...');
+  cron.schedule("* * * * *", () => {
+    console.log('Start fetching...');
 
-  const sqlite3 = sqlite.verbose();
+    const sqlite3 = sqlite.verbose();
 
-  const db = new sqlite3.Database("./md.db");
+    const db = new sqlite3.Database("./md.db");
 
-  let dbClient = new ChapterDb(db);
-
-
-
-  // client.sendText(config.rooms_id, 'message');
-  dbClient.findOne((_, res) => {
-    let latestid = res != undefined && res.length > 0 ? res[0].chapter_id : "";
-
-    console.log(`aaaaaaaaaaa latestid ${latestid == "" ? "no id found" : latestid}`);
-
-    let resAll = res != undefined ? res : [];
-
-    console.log(res)
-
-    mdCient
-      .feed()
-      .then(async (resultFeed) => {
-        console.log(`aaaaaaaaaaa resultFeed`);
-
-        console.log(resultFeed);
-
-        const indexLatestId2 = resultFeed.findIndex((e) => e.id == latestid)
-
-        const indexLatestId = indexLatestId2 < 0 ? (indexLatestId2 == 0 ? -1 : resultFeed.length + 1) : indexLatestId2;
+    let dbClient = new ChapterDb(db);
 
 
 
-        console.log(`aaaaaaaaaaa indexLatestId = ${indexLatestId}`);
+    dbClient.findOne((_, res) => {
+      let latestid = res != undefined && res.length > 0 ? res[0].chapter_id : "";
 
-        const indexFilter = resultFeed.splice(0, indexLatestId);
+      console.log(`aaaaaaaaaaa latestid ${latestid == "" ? "no id found" : latestid}`);
 
-        console.log('aaaaaaaaaaa indexFilter');
+      let resAll = res != undefined ? res : [];
 
+      console.log(res)
 
-        console.log(indexFilter);
+      mdCient
+        .feed()
+        .then(async (resultFeed) => {
+          console.log(`aaaaaaaaaaa resultFeed`);
 
-        const reverseIndexFilter = indexFilter.reverse();
+          console.log(resultFeed);
 
+          const indexLatestId2 = resultFeed.findIndex((e) => e.id == latestid)
 
-        let a = indexFilter.map((element) => element.id);
-
- 
-
-        reverseIndexFilter.forEach((element) => {
-
-          dbClient.insert(element.id);
-
-          console.log(element.id);
+          const indexLatestId = indexLatestId2 < 0 ? (indexLatestId2 == 0 ? -1 : resultFeed.length + 1) : indexLatestId2;
 
 
 
-          const message =
-            `${element.manga_title} \Chapter: ${element.chapter} \nhttps://mangadex.org/chapter/${element.id}/1 \n`;
+          console.log(`aaaaaaaaaaa indexLatestId = ${indexLatestId2}`);
 
-          console.log(message);
+          const indexFilter = resultFeed.splice(0, indexLatestId);
 
-          // client.sendText(config.room_id, message);
+          if (indexFilter.length > 0) {
+            dbClient.insert(indexFilter[0].id);
+          }
+
+          const reverseIndexFilter = indexFilter.reverse();
+
+          console.log('aaaaaaaaaaa reverseIndexFilter');
+
+
+
+
+          reverseIndexFilter.forEach((element) => {
+            const message =
+              `${element.manga_title} \Chapter: ${element.chapter} \nhttps://mangadex.org/chapter/${element.id}/1 \n`;
+
+            console.log(message);
+
+          })
+
         })
-
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+        .catch((err) => {
+          console.log(err);
+        });
+    });
   });
+
+
+
 });
-
-
-
-// });
 
 function delay(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
