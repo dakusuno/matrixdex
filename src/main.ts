@@ -42,7 +42,7 @@ client.start().then(() => {
     mdCient.login();
   }
 
-  // cron.schedule("*/2 * * * *", () => {
+  cron.schedule("* * * * *", () => {
     console.log('Start fetching...');
 
     const sqlite3 = sqlite.verbose();
@@ -86,7 +86,7 @@ client.start().then(() => {
 
 
 
-// });
+});
 
 function delay(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
