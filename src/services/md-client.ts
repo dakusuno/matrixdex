@@ -26,8 +26,12 @@ export class MdClient {
 
   public async refresh() {
     if (isJwtExpired(this.local.getRefresh())) {
+
+      console.log('isJwtExpired');
+
       return await this.login();
     }
+    
     return await this.client({
       method: "post",
       url: "https://api.mangadex.org/auth/refresh",
